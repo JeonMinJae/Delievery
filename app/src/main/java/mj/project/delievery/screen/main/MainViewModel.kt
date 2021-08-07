@@ -1,4 +1,4 @@
-package mj.project.delievery.screen
+package mj.project.delievery.screen.main
 
 import mj.project.delievery.screen.base.BaseViewModel
 

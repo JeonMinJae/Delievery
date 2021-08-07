@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 
 abstract class Model(
     open val id: Long,
-    open val type: CellType,
+    open val type: CellType
 ) {
 
     companion object {

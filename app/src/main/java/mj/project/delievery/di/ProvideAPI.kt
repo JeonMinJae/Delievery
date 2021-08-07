@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 
 fun provideRetrofit(
     okHttpClient: OkHttpClient,
-    gsonConverterFactory: GsonConverterFactory,
+    gsonConverterFactory: GsonConverterFactory
 ): Retrofit {
     return Retrofit.Builder()
         .baseUrl("")

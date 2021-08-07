@@ -15,6 +15,8 @@ class DelieveryApplication: Application() {
         appContext = this
 
         startKoin {
+            androidLogger(Level.ERROR)   //에러 레벨로 안드로이드 로그를 남긴다.
+            androidContext(this@DelieveryApplication) // 이거 안쓰면 에러뜸
             modules(appModule)
         }
     }
@@ -25,10 +27,8 @@ class DelieveryApplication: Application() {
     }
 
     companion object {
-
         var appContext: Context? = null
             private set //내부에서만 사용할거라서
-
     }
 
 }
