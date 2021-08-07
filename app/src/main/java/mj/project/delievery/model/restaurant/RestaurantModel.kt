@@ -5,6 +5,7 @@ import mj.project.delievery.model.CellType
 import mj.project.delievery.model.Model
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 
+// 내부 db로 부터 data를 받아서 엔티티화해서 repository와 상호작용한다.
 data class RestaurantModel(
     override val id: Long,
     override val type: CellType= CellType.RESTAURANT_CELL,

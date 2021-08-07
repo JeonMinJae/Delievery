@@ -18,7 +18,7 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
 
     private val restaurantCategory by lazy { arguments?.getSerializable(RESTAURANT_CATEGORY_KEY) as RestaurantCategory }
 
-    override val viewModel by viewModel<RestaurantListViewModel> { parametersOf(restaurantCategory)}
+    override val viewModel by viewModel<RestaurantListViewModel> { parametersOf(restaurantCategory)} // lazy해서 얻은 category를 viewmoel에 주입받는다.
 
     override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
 
@@ -40,18 +40,21 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
         recyclerVIew.adapter = adapter  // fragment_RESTAURANT_list의 recyclerview의 id값이다.
     }
 
+    //mutablelivedata.observe
+    // viewLifecycleOwner 바뀔때마다 확인
     override fun observeData() = viewModel.restaurantListLiveData.observe(viewLifecycleOwner) {
         Log.e("restaurantList", it.toString())
-        adapter.submitList(it)  // adapter의 mutablelist인지 list인지 잘보자
+        adapter.submitList(it)  // modelRecycleradapter의 mutablelist인지 list인지 잘보자
     }
 
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
 
+        //새로운 fragment를 생성할때 argument에 bundle을 넘겨줌으로서 데이터 넘겨줄수있고 여기서는 key값과 value를 pair형태로 넘겨준다.
         fun newInstance(restaurantCategory: RestaurantCategory): RestaurantListFragment {
             return RestaurantListFragment().apply {
                 arguments = bundleOf(
-                    RESTAURANT_CATEGORY_KEY to restaurantCategory
+                    RESTAURANT_CATEGORY_KEY to restaurantCategory //to를 사용하여 pair객체 생성
                 )
             }
         }

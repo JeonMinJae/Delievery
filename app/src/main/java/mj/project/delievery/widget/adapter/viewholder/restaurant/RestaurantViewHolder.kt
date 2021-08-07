@@ -32,7 +32,7 @@ class RestaurantViewHolder(
             val (minTime, maxTime) = model.deliveryTimeRange
             deliveryTimeText.text = resourcesProvider.getString(R.string.delivery_time, minTime, maxTime)
 
-            val (minTip, maxTip) = model.deliveryTipRange
+            val (minTip, maxTip) = model.deliveryTipRange //pair로 <int, int>로 받았기 때문에
             deliveryTipText.text = resourcesProvider.getString(R.string.delivery_tip, minTip, maxTip)
         }
     }

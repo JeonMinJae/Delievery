@@ -46,6 +46,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:tabGravity="fill"
         app:tabIndicatorFullWidth="false"
+        android:visibility="gone"
+        tools:visibility="visible"
         app:tabMaxWidth="0dp"
         app:tabMode="auto"/>
 
@@ -58,6 +60,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup
@@ -143,7 +147,10 @@
         app:layout_constraintTop_toBottomOf="@id/filterScrollView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/basketButtonContainer"

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.DiffUtil
 
+//sql과 같은 room 에 있는 내부 db와 repository와 상호작용한다.
 abstract class Model(
     open val id: Long,
     open val type: CellType

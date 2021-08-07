@@ -1,9 +1,10 @@
 package mj.project.delievery.di
 
 import kotlinx.coroutines.Dispatchers
-import mj.project.delievery.data.repository.DefaultRestaurantRepository
-import mj.project.delievery.data.repository.RestaurantRepository
-import mj.project.delievery.screen.main.MainViewModel
+import mj.project.delievery.data.repository.map.DefaultMapRepository
+import mj.project.delievery.data.repository.map.MapRepository
+import mj.project.delievery.data.repository.restaurant.DefaultRestaurantRepository
+import mj.project.delievery.data.repository.restaurant.RestaurantRepository
 import mj.project.delievery.screen.main.home.HomeViewModel
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListViewModel
@@ -17,18 +18,22 @@ import org.koin.dsl.module
 val appModule = module {
 
     //ViewModel
-    viewModel { HomeViewModel() }
+    viewModel { HomeViewModel(get()) }
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory : RestaurantCategory) -> RestaurantListViewModel(restaurantCategory,get()) }
 
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get()) }
+    single<MapRepository> { DefaultMapRepository(get(), get()) }
 
     // ProvideAPI
-    single { provideRetrofit(get(),get()) }
+    single { provideMapRetrofit(get(),get()) }
     single { provideGsonConverterFactory() }
     single { buildOkHttpClient() }
+
+    //service
+    single { provideMapApiService(get()) }
 
     // ResourcesProvider
     single<ResourcesProvider> { DefaultResourcesProvider(androidApplication()) }

@@ -1,4 +1,4 @@
-package mj.project.delievery.data.repository
+package mj.project.delievery.data.repository.restaurant
 
 import mj.project.delievery.data.entity.RestaurantEntity
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
