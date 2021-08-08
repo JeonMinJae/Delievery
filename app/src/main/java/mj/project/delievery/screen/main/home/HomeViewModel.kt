@@ -13,6 +13,10 @@ class HomeViewModel(
     private val mapRepository: MapRepository
 ): BaseViewModel() {
 
+    companion object {
+        const val MY_LOCATION_KEY = "MyLocation"
+    }
+
     val homeStateLiveData = MutableLiveData<HomeState>(HomeState.Uninitialized)
 
     //api호출
@@ -32,6 +36,16 @@ class HomeViewModel(
             )
         }
 
+    }
+
+    // 받아둔 데이터있는지 판별
+    fun getMapSearchInfo(): MapSearchInfoEntity? {
+        when (val data = homeStateLiveData.value) {
+            is HomeState.Success -> {
+                return data.mapSearchInfo
+            }
+        }
+        return null
     }
 
 

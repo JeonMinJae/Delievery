@@ -56,7 +56,7 @@ interface MapApiService {
         @Query("callback") callback: String? = null,
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("coordType") coordType: String? = null, //특정타입에맞게 list형식으로 받는것
+        @Query("coordType") coordType: String? = null, // 받고자 하는 응답 좌표계 유형 ex) WGS84(경위도), TM128(메카토르)
         @Query("addressType") addressType: String? = null
     ): Response<AddressInfoResponse>
 }

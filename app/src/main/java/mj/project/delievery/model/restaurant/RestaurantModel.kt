@@ -1,6 +1,6 @@
 package mj.project.delievery.model.restaurant
 
-import mj.project.delievery.data.entity.RestaurantEntity
+import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.model.CellType
 import mj.project.delievery.model.Model
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory

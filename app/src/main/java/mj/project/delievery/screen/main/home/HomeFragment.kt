@@ -2,6 +2,7 @@ package mj.project.delievery.screen.main.home
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -13,10 +14,12 @@ import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayoutMediator
 import mj.project.delievery.R
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
+import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.databinding.FragmentHomeBinding
 import mj.project.delievery.screen.base.BaseFragment
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListFragment
+import mj.project.delievery.screen.mylocation.MyLocationActivity
 import mj.project.delievery.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -31,6 +34,27 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override fun getViewBinding(): FragmentHomeBinding = FragmentHomeBinding.inflate(layoutInflater)
 
+    //activity result를 받아오기 위한 luncher
+    private val changeLocationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)?.let { myLocationInfo ->
+                viewModel.loadReverseGeoInformation(myLocationInfo.locationLatLng) //위치 변경된걸 알려줌
+            }
+        }
+    }
+
+    override fun initViews() = with(binding) {
+        locationTitleTextView.setOnClickListener{
+            viewModel.getMapSearchInfo()?.let { mapInfo ->
+                changeLocationLauncher.launch(
+                    MyLocationActivity.newIntent(
+                        requireContext(), mapInfo
+                    )
+                )
+            }
+        }
+
+    }
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding){
         val restaurantCategories = RestaurantCategory.values() // 전체, 한식 등등
 
@@ -65,7 +89,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.tabLayout.isVisible =true
                 binding.filterScrollView.isVisible = true
                 binding.viewPager.isVisible = true //위치정보없을경우 숨김
-                initViewPager(it.mapSearchInfo.locationLatLng)
+                initViewPager(it.mapSearchInfo.locationLatLng) //위도경도가지고 viewpager실행
             }
             is HomeState.Error -> {
                 binding.locationLoading.isGone = true
@@ -79,6 +103,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    // 내 위치 얻는 함수
     private fun getMyLocation() {
         if (::locationManager.isInitialized.not()) {
             locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -112,6 +137,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             }
         }
 
+    // 내위치 가져올때 생기는 상황
     @SuppressLint("MissingPermission")
     private fun setMyLocationListener() {
         val minTime = 1500L
@@ -133,6 +159,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    // 위치 변경시 위도경도 가져옴
     inner class MyLocationListener : LocationListener {
         override fun onLocationChanged(location: Location) {
             //binding.locationTitleTextView.text = "${location.latitude}, ${location.longitude}"

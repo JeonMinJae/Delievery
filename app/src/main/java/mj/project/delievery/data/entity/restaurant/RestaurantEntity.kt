@@ -1,7 +1,8 @@
-package mj.project.delievery.data.entity
+package mj.project.delievery.data.entity.restaurant
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import mj.project.delievery.data.entity.Entity
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 
 //remote data source로 retrofit 과 repository와 상호작용한다.

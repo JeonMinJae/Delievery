@@ -2,7 +2,7 @@ package mj.project.delievery.data.repository.restaurant
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import mj.project.delievery.data.entity.RestaurantEntity
+import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.util.provider.ResourcesProvider
 

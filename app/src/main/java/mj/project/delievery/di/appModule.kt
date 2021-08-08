@@ -1,6 +1,7 @@
 package mj.project.delievery.di
 
 import kotlinx.coroutines.Dispatchers
+import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.data.repository.map.DefaultMapRepository
 import mj.project.delievery.data.repository.map.MapRepository
 import mj.project.delievery.data.repository.restaurant.DefaultRestaurantRepository
@@ -9,6 +10,7 @@ import mj.project.delievery.screen.main.home.HomeViewModel
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListViewModel
 import mj.project.delievery.screen.main.my.MyViewModel
+import mj.project.delievery.screen.mylocation.MyLocationViewModel
 import mj.project.delievery.util.provider.DefaultResourcesProvider
 import mj.project.delievery.util.provider.ResourcesProvider
 import org.koin.android.ext.koin.androidApplication
@@ -21,7 +23,7 @@ val appModule = module {
     viewModel { HomeViewModel(get()) }
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory : RestaurantCategory) -> RestaurantListViewModel(restaurantCategory,get()) }
-
+    viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get()) }

@@ -8,11 +8,13 @@
     <style name="Widget.Street.Toolbar.WithArrow" parent="Widget.Street.Toolbar">
         <item name="navigationIcon">@drawable/ic_back_arrow</item>
         <item name="android:title">@null</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Widget.Street.Toolbar.WithClose" parent="Widget.Street.Toolbar">
         <item name="navigationIcon">@drawable/ic_close</item>
         <item name="android:title">@null</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Widget.Street.Chip" parent="Widget.MaterialComponents.Chip.Choice">
