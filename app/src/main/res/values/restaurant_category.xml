@@ -14,7 +14,7 @@
     <string name="all_type">식당</string>
     <string name="korean_food_type">한식</string>
     <string name="dumpling_food_type">분식</string>
-    <string name="cafe_dessert_type">카페;디저트</string>
+    <string name="cafe_dessert_type">카페;디저트</string> <!--두개 이상일경우 ;로 구분짓는다.-->
     <string name="japanese_food_type">일식;돈까스;회</string>
     <string name="chinese_food_type">중식</string>
     <string name="asian_europe_food_type">아시안;양식</string>

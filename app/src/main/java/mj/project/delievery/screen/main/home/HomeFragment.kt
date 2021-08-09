@@ -61,18 +61,28 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         // ::변수 는 ::을 통해서만 접근이 가능한 .isInitialized을 사용하여 lateinit 초기화를 확인할수있다. 초기화안하면 접근불가
         if(::viewPagerAdapter.isInitialized.not()){
             val restaurantListFragmentList = restaurantCategories.map{
-                RestaurantListFragment.newInstance(it) // 각각의 프레그먼트와 카테고리를 map한다.
+                RestaurantListFragment.newInstance(it, locationLatLng) // 각각의 프레그먼트와 카테고리를 map한다.
             }
             viewPagerAdapter = RestaurantListFragmentPagerAdapter(
                 this@HomeFragment,
-                restaurantListFragmentList
+                restaurantListFragmentList,
+                locationLatLng
             )
             viewPager.adapter = viewPagerAdapter // xml의 id값
+            viewPager.offscreenPageLimit = restaurantCategories.size //페이지바뀔때마다 새로만드는게 아니라 계속쓰게처리
+            TabLayoutMediator(tabLayout, viewPager) { tab, position -> //텝 레이아웃에 텝들을 뿌려준다.
+                tab.setText(restaurantCategories[position].categoryNameId)   //stringres 텍스트 뿌려준다. 전체/한식 등 position의 이름을 얻는다.
+            }.attach()
         }
-        viewPager.offscreenPageLimit = restaurantCategories.size //페이지바뀔때마다 새로만드는게 아니라 계속쓰게처리
-        TabLayoutMediator(tabLayout, viewPager) { tab, position -> //텝 레이아웃에 텝들을 뿌려준다.
-            tab.setText(restaurantCategories[position].categoryNameId)   //stringres 텍스트 뿌려준다. 전체/한식 등 position의 이름을 얻는다.
-        }.attach()
+        //위치가 바꼈을때 api호출
+        if (locationLatLng != viewPagerAdapter.locationLatLngEntity) {
+            viewPagerAdapter.locationLatLngEntity = locationLatLng
+            viewPagerAdapter.fragmentList.forEach {
+                it.viewModel.setLocationLatLng(locationLatLng)
+            }
+        }
+
+
     }
     override fun observeData() = viewModel.homeStateLiveData.observe(viewLifecycleOwner){
         when (it) {
@@ -90,6 +100,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.filterScrollView.isVisible = true
                 binding.viewPager.isVisible = true //위치정보없을경우 숨김
                 initViewPager(it.mapSearchInfo.locationLatLng) //위도경도가지고 viewpager실행
+                if(it.isLocationSame.not()){
+                    Toast.makeText(requireContext(), R.string.please_set_your_current_location, Toast.LENGTH_SHORT).show()
+                }
             }
             is HomeState.Error -> {
                 binding.locationLoading.isGone = true

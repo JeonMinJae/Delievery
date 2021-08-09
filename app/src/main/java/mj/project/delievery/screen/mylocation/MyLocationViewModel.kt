@@ -8,12 +8,14 @@ import mj.project.delievery.R
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.data.repository.map.MapRepository
+import mj.project.delievery.data.repository.user.UserRepository
 import mj.project.delievery.screen.base.BaseViewModel
 import mj.project.delievery.screen.main.home.HomeState
 
 class MyLocationViewModel(
     private val mapSearchInfoEntity: MapSearchInfoEntity,
-    private val mapRepository: MapRepository
+    private val mapRepository: MapRepository,
+    private val userRepository: UserRepository
 ) : BaseViewModel() {
 
     val myLocationStateLiveData = MutableLiveData<MyLocationState>(MyLocationState.Uninitialized)
@@ -43,7 +45,10 @@ class MyLocationViewModel(
     fun confirmSelectLocation() = viewModelScope.launch {
         when(val data = myLocationStateLiveData.value) {
             is MyLocationState.Success -> {
-
+                userRepository.insertUserLocation(data.mapSearchInfoEntity.locationLatLng)
+                myLocationStateLiveData.value = MyLocationState.Confirm(
+                    data.mapSearchInfoEntity
+                )
             }
         }
     }

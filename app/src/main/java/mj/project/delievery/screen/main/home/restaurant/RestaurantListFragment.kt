@@ -3,6 +3,7 @@ package mj.project.delievery.screen.main.home.restaurant
 import android.util.Log
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.databinding.FragmentRestaurantListBinding
 import mj.project.delievery.model.restaurant.RestaurantModel
 import mj.project.delievery.screen.base.BaseFragment
@@ -18,7 +19,9 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
 
     private val restaurantCategory by lazy { arguments?.getSerializable(RESTAURANT_CATEGORY_KEY) as RestaurantCategory }
 
-    override val viewModel by viewModel<RestaurantListViewModel> { parametersOf(restaurantCategory)} // lazy해서 얻은 category를 viewmoel에 주입받는다.
+    private val locationLatLng by lazy { arguments?.getParcelable<LocationLatLngEntity>(LOCATION_KEY) }
+
+    override val viewModel by viewModel<RestaurantListViewModel> { parametersOf(restaurantCategory, locationLatLng)} // lazy해서 얻은 category를 viewmoel에 주입받는다.
 
     override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
 
@@ -49,12 +52,17 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
 
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
+        const val LOCATION_KEY = "location"
 
         //새로운 fragment를 생성할때 argument에 bundle을 넘겨줌으로서 데이터 넘겨줄수있고 여기서는 key값과 value를 pair형태로 넘겨준다.
-        fun newInstance(restaurantCategory: RestaurantCategory): RestaurantListFragment {
+        fun newInstance(
+            restaurantCategory: RestaurantCategory,
+            locationLatLng: LocationLatLngEntity
+        ): RestaurantListFragment {
             return RestaurantListFragment().apply {
                 arguments = bundleOf(
-                    RESTAURANT_CATEGORY_KEY to restaurantCategory //to를 사용하여 pair객체 생성
+                    RESTAURANT_CATEGORY_KEY to restaurantCategory, //to를 사용하여 pair객체 생성
+                    LOCATION_KEY to locationLatLng
                 )
             }
         }

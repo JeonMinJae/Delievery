@@ -1,6 +1,7 @@
 package mj.project.delievery.data.network
 
 import mj.project.delievery.data.response.address.AddressInfoResponse
+import mj.project.delievery.data.response.search.SearchResponse
 import mj.project.delievery.data.url.Key
 import mj.project.delievery.data.url.Url
 import retrofit2.Response
@@ -27,7 +28,7 @@ interface MapApiService {
         @Query("reqCoordType") reqCoordType: String? = null,
         @Query("centerLon") centerLon: String? = null,
         @Query("centerLat") centerLat: String? = null
-    ): Response<SearchResponse>
+    ): Response<SearchResponse>*/
 
     @GET(Url.GET_TMAP_POIS_AROUND)
     suspend fun getSearchLocationAround(
@@ -47,7 +48,7 @@ interface MapApiService {
         @Query("reqCoordType") reqCoordType: String? = null,
         @Query("centerLon") centerLon: String? = null,
         @Query("centerLat") centerLat: String? = null
-    ): Response<SearchResponse>*/
+    ): Response<SearchResponse>
 
     @GET(Url.GET_TMAP_REVERSE_GEO_CODE)
     suspend fun getReverseGeoCode(

@@ -7,10 +7,12 @@ import mj.project.delievery.R
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.data.repository.map.MapRepository
+import mj.project.delievery.data.repository.user.UserRepository
 import mj.project.delievery.screen.base.BaseViewModel
 
 class HomeViewModel(
-    private val mapRepository: MapRepository
+    private val mapRepository: MapRepository,
+    private val userRepository: UserRepository
 ): BaseViewModel() {
 
     companion object {
@@ -24,11 +26,13 @@ class HomeViewModel(
         locationLatLngEntity: LocationLatLngEntity
     )= viewModelScope.launch {
         homeStateLiveData.value = HomeState.Loading
-
+        val userLocation = userRepository.getUserLocation() //현재 저장된 location가져옴
+        val currentLocation = userLocation ?: locationLatLngEntity //userLocation을 가져오고 없으면 latlng가 현재위치
         val addressInfo = mapRepository.getReverseGeoInformation(locationLatLngEntity)
         addressInfo?.let { info ->
             homeStateLiveData.value = HomeState.Success(
-                mapSearchInfo = info.toSearchInfoEntity(locationLatLngEntity)
+                mapSearchInfo = info.toSearchInfoEntity(locationLatLngEntity),
+                isLocationSame = currentLocation == locationLatLngEntity //내 위치가 gps기반으로 하는 위치가 맞느냐
             )
         } ?: kotlin.run {
             homeStateLiveData.value = HomeState.Error(

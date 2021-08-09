@@ -22,6 +22,8 @@ import mj.project.delievery.screen.main.home.HomeViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
+//onmapreadycallback : 지도 객체를 얻으려면 OnMapReadyCallback 인터페이스를 구현한 클래스를
+// getMapAsync ( ) 함수를 이용하여 등록합니다. 이렇게 해놓으면 지도 객체를 사용할 수 있을 때 onMapReady( ) 함수가 자동으로 호출되면서 매개변수로 GoogleMap 객체가 전달됩니다.
 class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationBinding>(), OnMapReadyCallback {
 
     // () 와 {} 를 헷갈리지말자
@@ -51,7 +53,7 @@ class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationB
             finish()
         }
         confirmButton.setOnClickListener{
-
+            viewModel.confirmSelectLocation()
         }
         setupGoogleMap()
     }
@@ -68,7 +70,10 @@ class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationB
                     }
                 }
                 is MyLocationState.Confirm -> {
-
+                    setResult(Activity.RESULT_OK, Intent().apply {
+                        putExtra(HomeViewModel.MY_LOCATION_KEY, it.mapSearchInfoEntity)
+                    })
+                    finish()
                 }
                 is MyLocationState.Error -> {
                     Toast.makeText(this, it.messageId, Toast.LENGTH_SHORT).show()
