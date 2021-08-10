@@ -19,6 +19,7 @@ import mj.project.delievery.databinding.FragmentHomeBinding
 import mj.project.delievery.screen.base.BaseFragment
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListFragment
+import mj.project.delievery.screen.main.home.restaurant.RestautantFilterOrder
 import mj.project.delievery.screen.mylocation.MyLocationActivity
 import mj.project.delievery.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -53,13 +54,38 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 )
             }
         }
+        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.chipDefault -> {
+                    chipInitialize.isGone = true
+                    changeRestaurantFilterOrder(RestautantFilterOrder.DEFAULT)
+                }
+                R.id.chipInitialize -> {
+                    chipDefault.isChecked = true
+                }
+                R.id.chipDeliveryTip -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantFilterOrder(RestautantFilterOrder.LOW_DELIVERY_TIP)
+                }
+                R.id.chipFastDelivery -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantFilterOrder(RestautantFilterOrder.FAST_DELIVERY)
+                }
+                R.id.chipTopRate -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantFilterOrder(RestautantFilterOrder.TOP_RATE)
+                }
+            }
+        }
 
     }
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding){
+
         val restaurantCategories = RestaurantCategory.values() // 전체, 한식 등등
 
         // ::변수 는 ::을 통해서만 접근이 가능한 .isInitialized을 사용하여 lateinit 초기화를 확인할수있다. 초기화안하면 접근불가
         if(::viewPagerAdapter.isInitialized.not()){
+            orderChipGroup.isVisible = true
             val restaurantListFragmentList = restaurantCategories.map{
                 RestaurantListFragment.newInstance(it, locationLatLng) // 각각의 프레그먼트와 카테고리를 map한다.
             }
@@ -113,6 +139,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
             }
 
+        }
+    }
+
+    private fun changeRestaurantFilterOrder(order: RestautantFilterOrder) {
+        viewPagerAdapter.fragmentList.forEach {
+            it.viewModel.setRestaurantFilterOrder(order)
         }
     }
 

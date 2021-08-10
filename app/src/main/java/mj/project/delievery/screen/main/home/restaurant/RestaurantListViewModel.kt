@@ -12,7 +12,9 @@ import mj.project.delievery.screen.base.BaseViewModel
 class RestaurantListViewModel(
     private val restaurantCategory: RestaurantCategory,
     private var locationLatLng: LocationLatLngEntity,
-    private val restaurantRepository: RestaurantRepository
+    private val restaurantRepository: RestaurantRepository,
+    private var restaurantFilterOrder: RestautantFilterOrder = RestautantFilterOrder.DEFAULT
+
 
 ) : BaseViewModel() {
 
@@ -20,25 +22,42 @@ class RestaurantListViewModel(
 
     override fun fetchData(): Job = viewModelScope.launch {
         val restaurantList = restaurantRepository.getList(restaurantCategory, locationLatLng)
-                restaurantListLiveData.value = restaurantList.map {
-                    RestaurantModel(
-                        id = it.id,
-                        restaurantInfoId = it.restaurantInfoId,
-                        restaurantCategory = it.restaurantCategory,
-                        restaurantTitle = it.restaurantTitle,
-                        restaurantImageUrl = it.restaurantImageUrl,
-                        grade = it.grade,
-                        reviewCount = it.reviewCount,
-                        deliveryTimeRange = it.deliveryTimeRange,
-                        deliveryTipRange = it.deliveryTipRange
-                    ) // 오류가 뜨면 CELLTYPE의 기본값을 안 정해줘서다
-                }
-
-
+        val sortedList = when (restaurantFilterOrder) {
+            RestautantFilterOrder.DEFAULT -> {
+                restaurantList
+            }
+            RestautantFilterOrder.LOW_DELIVERY_TIP -> {
+                restaurantList.sortedBy { it.deliveryTipRange.first }
+            }
+            RestautantFilterOrder.FAST_DELIVERY -> {
+                restaurantList.sortedBy { it.deliveryTimeRange.first }
+            }
+            RestautantFilterOrder.TOP_RATE -> {
+                restaurantList.sortedByDescending { it.grade }
+            }
+        }
+        restaurantListLiveData.value = sortedList.map {
+            RestaurantModel(
+                id = it.id,
+                restaurantInfoId = it.restaurantInfoId,
+                restaurantCategory = it.restaurantCategory,
+                restaurantTitle = it.restaurantTitle,
+                restaurantImageUrl = it.restaurantImageUrl,
+                grade = it.grade,
+                reviewCount = it.reviewCount,
+                deliveryTimeRange = it.deliveryTimeRange,
+                deliveryTipRange = it.deliveryTipRange
+            ) // 오류가 뜨면 CELLTYPE의 기본값을 안 정해줘서다
+        }
     }
 
     fun setLocationLatLng(locationLatLng: LocationLatLngEntity) {
         this.locationLatLng = locationLatLng
+        fetchData()
+    }
+
+    fun setRestaurantFilterOrder(order: RestautantFilterOrder) {
+        this.restaurantFilterOrder = order
         fetchData()
     }
 }
