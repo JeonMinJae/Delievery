@@ -10,6 +10,7 @@
         android:roundIcon="@mipmap/main_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Delievery">
+        <activity android:name=".screen.main.home.restaurant.detail.RestaurantDetailActivity"></activity>
         <activity android:name=".screen.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,17 +18,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screen.mylocation.MyLocationActivity"/>
+        <activity android:name=".screen.mylocation.MyLocationActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_map" />
-
     </application>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
 </manifest>

@@ -7,6 +7,7 @@ import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.databinding.FragmentRestaurantListBinding
 import mj.project.delievery.model.restaurant.RestaurantModel
 import mj.project.delievery.screen.base.BaseFragment
+import mj.project.delievery.screen.main.home.restaurant.detail.RestaurantDetailActivity
 import mj.project.delievery.util.provider.ResourcesProvider
 import mj.project.delievery.widget.adapter.ModelRecyclerAdapter
 import mj.project.delievery.widget.adapter.listener.restaurant.RestaurantListListener
@@ -31,10 +32,9 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
         ModelRecyclerAdapter<RestaurantModel, RestaurantListViewModel>(listOf(), viewModel, resourcesProvider, adapterListener = object :
             RestaurantListListener {
             override fun onClickItem(model: RestaurantModel) {
-                Toast.makeText(requireContext(), "$model", Toast.LENGTH_SHORT).show()
-                /*startActivity(
+                startActivity(
                     RestaurantDetailActivity.newIntent(requireContext(), model.toEntity())
-                )*/
+                )
             }
         })
     }
@@ -53,6 +53,7 @@ class RestaurantListFragment : BaseFragment<RestaurantListViewModel, FragmentRes
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
         const val LOCATION_KEY = "location"
+        const val RESTAURANT_KEY = "Restaurant"
 
         //새로운 fragment를 생성할때 argument에 bundle을 넘겨줌으로서 데이터 넘겨줄수있고 여기서는 key값과 value를 pair형태로 넘겨준다.
         fun newInstance(

@@ -27,7 +27,7 @@
     <string name="location_not_found">위치정보 없음</string>
 
     <string name="can_not_load_address_info">위치 정보를 불러올 수 없습니다.</string>
-    
+
     <string name="please_set_your_current_location">위치가 맞는지 확인해주세요</string>
 
     <string name="initialize">초기화</string>
@@ -75,4 +75,6 @@
 
     <!-- Image Preview -->
     <string name="images_page">(%d/%d)</string>
+    <string name="delievery_time">배달시간</string>
+    <string name="delievery_tip">배달팁</string>
 </resources>
