@@ -8,7 +8,7 @@ import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.screen.base.BaseViewModel
 
 class RestaurantDetailViewModel(
-    private val restaurantEntity: RestaurantEntity,
+    private val restaurantEntity: RestaurantEntity
 ) : BaseViewModel() {
 
     val restaurantDetailStateLiveData = MutableLiveData<RestaurantDetailState>(RestaurantDetailState.Uninitialized)

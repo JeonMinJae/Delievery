@@ -46,7 +46,8 @@ class RestaurantListViewModel(
                 grade = it.grade,
                 reviewCount = it.reviewCount,
                 deliveryTimeRange = it.deliveryTimeRange,
-                deliveryTipRange = it.deliveryTipRange
+                deliveryTipRange = it.deliveryTipRange,
+                restaurantTelNumber = it.restaurantTelNumber
             ) // 오류가 뜨면 CELLTYPE의 기본값을 안 정해줘서다
         }
     }

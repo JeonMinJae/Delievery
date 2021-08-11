@@ -3,6 +3,7 @@ package mj.project.delievery.di
 import kotlinx.coroutines.Dispatchers
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
+import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.data.repository.map.DefaultMapRepository
 import mj.project.delievery.data.repository.map.MapRepository
 import mj.project.delievery.data.repository.restaurant.DefaultRestaurantRepository
@@ -12,6 +13,7 @@ import mj.project.delievery.data.repository.user.UserRepository
 import mj.project.delievery.screen.main.home.HomeViewModel
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListViewModel
+import mj.project.delievery.screen.main.home.restaurant.detail.RestaurantDetailViewModel
 import mj.project.delievery.screen.main.my.MyViewModel
 import mj.project.delievery.screen.mylocation.MyLocationViewModel
 import mj.project.delievery.util.provider.DefaultResourcesProvider
@@ -27,6 +29,7 @@ val appModule = module {
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory : RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory,locationLatLng,get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get()) }
+    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get(),get()) }
