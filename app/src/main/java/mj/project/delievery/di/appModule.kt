@@ -29,12 +29,12 @@ val appModule = module {
     viewModel { MyViewModel() }
     viewModel { (restaurantCategory : RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory,locationLatLng,get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get()) }
-    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity) }
+    viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get(),get()) }
     single<MapRepository> { DefaultMapRepository(get(), get()) }
-    single<UserRepository> { DefaultUserRepository(get(), get()) }
+    single<UserRepository> { DefaultUserRepository(get(), get(),get()) }
 
     // ProvideAPI
     single { provideMapRetrofit(get(),get()) }
@@ -50,7 +50,7 @@ val appModule = module {
     //room
     single { provideDB(androidApplication()) }
     single { provideLocationDao(get()) }
-
+    single { provideRestaurantDao(get()) }
     // 코루틴
     single { Dispatchers.IO }
     single { Dispatchers.Main }

@@ -3,6 +3,7 @@ package mj.project.delievery.screen.main.home.restaurant.detail
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
@@ -63,10 +64,13 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             finish()
         }
         callButton.setOnClickListener {
-
+            viewModel.getRestaurantTelNumber()?.let { telNumber ->
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$telNumber")) // 전화앱이 실행된다.
+                startActivity(intent)
+            }
         }
         likeButton.setOnClickListener {
-
+            viewModel.toggleLikedRestaurant()
         }
         shareButton.setOnClickListener {
 
