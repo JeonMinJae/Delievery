@@ -1,6 +1,7 @@
 package mj.project.delievery.di
 
 import mj.project.delievery.BuildConfig
+import mj.project.delievery.data.network.FoodApiService
 import mj.project.delievery.data.network.MapApiService
 import mj.project.delievery.data.url.Url
 import okhttp3.OkHttpClient
@@ -13,12 +14,27 @@ fun provideMapApiService(retrofit: Retrofit): MapApiService {
     return retrofit.create(MapApiService::class.java)
 }
 
+fun provideFoodApiService(retrofit: Retrofit): FoodApiService {
+    return retrofit.create(FoodApiService::class.java)
+}
+
 fun provideMapRetrofit(
     okHttpClient: OkHttpClient,
     gsonConverterFactory: GsonConverterFactory
 ): Retrofit {
     return Retrofit.Builder()
         .baseUrl(Url.TMAP_URL)
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
+        .build()
+}
+
+fun provideFoodRetrofit(
+    okHttpClient: OkHttpClient,
+    gsonConverterFactory: GsonConverterFactory,
+): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl(Url.FOOD_URL)
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()

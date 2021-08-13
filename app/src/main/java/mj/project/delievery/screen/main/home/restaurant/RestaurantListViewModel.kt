@@ -13,9 +13,7 @@ class RestaurantListViewModel(
     private val restaurantCategory: RestaurantCategory,
     private var locationLatLng: LocationLatLngEntity,
     private val restaurantRepository: RestaurantRepository,
-    private var restaurantFilterOrder: RestautantFilterOrder = RestautantFilterOrder.DEFAULT
-
-
+    private var restaurantFilterOrder: RestautantFilterOrder = RestautantFilterOrder.DEFAULT  //직접 입력해줬기 때문에 appmoudle에서 di가 필요하지않는다.
 ) : BaseViewModel() {
 
     val restaurantListLiveData= MutableLiveData<List<RestaurantModel>>()

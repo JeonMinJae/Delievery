@@ -25,6 +25,8 @@ import mj.project.delievery.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
+    // override fun onCreateView(...): View? {
+    //    viewModel = ViewModelProviders.of(this) .get(HomeViewModel::class.java)} 를 core ktx를 사용해서
     override val viewModel by viewModel<HomeViewModel>()
 
     private lateinit var viewPagerAdapter: RestaurantListFragmentPagerAdapter
@@ -54,7 +56,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 )
             }
         }
-        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->
+        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->  // 사용 하지 않는 매개 변수는 이름을 지정할 필요가 없습니다.
             when (checkedId) {
                 R.id.chipDefault -> {
                     chipInitialize.isGone = true

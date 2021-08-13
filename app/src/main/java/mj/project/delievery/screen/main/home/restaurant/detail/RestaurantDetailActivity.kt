@@ -9,15 +9,20 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import mj.project.delievery.R
 import mj.project.delievery.data.entity.restaurant.RestaurantEntity
+import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
 import mj.project.delievery.databinding.ActivityRestaurantDetailBinding
 import mj.project.delievery.extensions.fromDpToPx
 import mj.project.delievery.extensions.load
 import mj.project.delievery.screen.base.BaseActivity
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListFragment
+import mj.project.delievery.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
+import mj.project.delievery.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import mj.project.delievery.widget.adapter.RestaurantDetailListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.abs
@@ -32,12 +37,17 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
 
     override fun getViewBinding(): ActivityRestaurantDetailBinding = ActivityRestaurantDetailBinding.inflate(layoutInflater)
 
+    private lateinit var viewPagerAdapter: RestaurantDetailListFragmentPagerAdapter
+
     override fun initViews() {
         initAppBar()
     }
 
     override fun observeData() = viewModel.restaurantDetailStateLiveData.observe(this) {
         when (it) {
+            is RestaurantDetailState.Loading -> {
+                handleLoading()
+            }
             is RestaurantDetailState.Success -> {
                 handleSuccess(it)
             }
@@ -46,16 +56,16 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
     }
 
     private fun initAppBar() = with(binding) {
-        appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset -> //스크롤시 앱바의 크기상쇄하는 리스너다.
             val topPadding = 300f.fromDpToPx().toFloat()
-            val realAlphaScrollHeight = appBarLayout.measuredHeight - appBarLayout.totalScrollRange // 실제 크기 - 스크롤 가능한 범위
+            val realAlphaScrollHeight = appBarLayout.measuredHeight - appBarLayout.totalScrollRange // 실제 다 펴진크기 - 스크롤 가능한 범위
             val abstractOffset = abs(verticalOffset) //절대값으로 움직인값, 기준으로 얼마나 떨어져있는지
 
             val realAlphaVerticalOffset: Float = if (abstractOffset - topPadding < 0) 0f  //기준으로 움직인게 300f보다 적을경우
             else abstractOffset - topPadding
 
             if (abstractOffset < topPadding) {
-                restaurantTitleTextView.alpha = 0f  //투명도는 0
+                restaurantTitleTextView.alpha = 0f  //투명도는 0 = 선명
                 return@OnOffsetChangedListener
             }
             val percentage = realAlphaVerticalOffset / realAlphaScrollHeight
@@ -76,7 +86,7 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
         shareButton.setOnClickListener {
             viewModel.getRestaurantInfo()?.let { restaurantInfo ->
                 val intent = Intent(Intent.ACTION_SEND).apply {
-                    type = MIMETYPE_TEXT_PLAIN //ClipDescription
+                    type = MIMETYPE_TEXT_PLAIN //ClipDescription - 평범한 텍스트
                     putExtra(
                         Intent.EXTRA_TEXT,
                         "맛있는 음식점 : ${restaurantInfo.restaurantTitle}" +
@@ -90,12 +100,17 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
         }
     }
 
+    private fun handleLoading() = with(binding) {
+        progressBar.isVisible = true
+    }
+
     private fun handleSuccess(state: RestaurantDetailState.Success) = with(binding) {
         progressBar.isGone = true
 
         val restaurantEntity = state.restaurantEntity
 
-        callButton.isGone = restaurantEntity.restaurantTelNumber == null
+        // callButton.visibility = if (restaurantEntity.restaurantTelNumber == null) callButton.Gone else callButton.visible 이것을 Core ktx를 사용한것이다.
+        callButton.isGone = restaurantEntity.restaurantTelNumber == null  // telnumber가 없으면 전화버튼 제거
 
         restaurantTitleTextView.text = restaurantEntity.restaurantTitle
         restaurantImage.load(restaurantEntity.restaurantImageUrl)
@@ -116,6 +131,31 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             }),
             null, null, null
         )
+
+        if (::viewPagerAdapter.isInitialized.not()) {
+            initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantFoodList)
+        }
+    }
+
+    private fun initViewPager(restaurantInfoId: Long, restaurantFoodList: List<RestaurantFoodEntity>?) {
+        viewPagerAdapter = RestaurantDetailListFragmentPagerAdapter(
+            this,
+            listOf(
+                RestaurantMenuListFragment.newInstance(
+                    restaurantInfoId,
+                    ArrayList(restaurantFoodList ?: listOf())
+                ),
+
+                RestaurantReviewListFragment.newInstance(
+                    restaurantInfoId
+                )
+            )
+        )
+        binding.menuAndReviewViewPager.adapter = viewPagerAdapter
+        TabLayoutMediator(binding.menuAndReviewTabLayout, binding.menuAndReviewViewPager) { tab, position ->
+            tab.setText(RestaurantDetailCategory.values()[position].categoryNameId)
+        }.attach()
+
     }
 
     companion object {

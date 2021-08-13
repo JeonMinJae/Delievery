@@ -19,7 +19,7 @@ class DefaultMapRepository(
             lat = locationLatLngEntity.latitude,
             lon = locationLatLngEntity.longitude
         )
-        if (response.isSuccessful) {
+        if (response.isSuccessful) { // mapApiService.getReverseGeoCode()가 성공적으로 실행되면
             response.body()?.addressInfo
         } else {
             null

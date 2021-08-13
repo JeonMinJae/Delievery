@@ -32,18 +32,18 @@ class DefaultRestaurantRepository(
             reqCoordType = "WGS84GEO"
         )
         if (response.isSuccessful) {
-            response.body()?.searchPoiInfo?.pois?.poi?.mapIndexed { index, poi ->
+            response.body()?.searchPoiInfo?.pois?.poi?.mapIndexed { index, poi -> //poi에 name같은게 index[0]인데 엔티티와 map해준다.
                 RestaurantEntity(
                     id = hashCode().toLong(),
                     restaurantInfoId = (1..10).random().toLong(),
                     restaurantCategory = restaurantCategory,
-                    restaurantTitle = poi.name ?: "제목 없음",
+                    restaurantTitle = poi.name ?: "제목 없음", //map 해줬다.
                     restaurantImageUrl = "https://picsum.photos/200",
                     grade = (1 until 5).random() + ((0..10).random() / 10f),
                     reviewCount = (0 until 200).random(),
                     deliveryTimeRange = Pair((0..20).random(), (40..60).random()),
                     deliveryTipRange = Pair((0..1000).random(), (2000..4000).random()),
-                    restaurantTelNumber = poi.telNo
+                    restaurantTelNumber = poi.telNo  //map 해줬다.
                 )
             } ?: listOf()
         } else {

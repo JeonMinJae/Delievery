@@ -5,7 +5,7 @@ import androidx.room.TypeConverter
 object RoomTypeConverters {
 
     @TypeConverter
-    @JvmStatic
+    @JvmStatic  // static 변수의 get/set 함수를 자동으로 만들라는 의미
     fun toString(pair: Pair<Int, Int>): String {
         return "${pair.first},${pair.second}"
     }
