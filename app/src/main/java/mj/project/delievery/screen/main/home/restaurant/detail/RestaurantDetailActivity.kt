@@ -31,6 +31,7 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
 
     override val viewModel by viewModel<RestaurantDetailViewModel>{
         parametersOf(
+            //Parcelable은 intent로 데이터 전달 시 객체 자체를 전달 할 수 있도록 해준다
             intent.getParcelableExtra<RestaurantEntity>(RestaurantListFragment.RESTAURANT_KEY)
         )
     }
@@ -135,6 +136,14 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
         if (::viewPagerAdapter.isInitialized.not()) {
             initViewPager(state.restaurantEntity.restaurantInfoId, state.restaurantFoodList)
         }
+
+        notifyBasketCount(state.foodMenuListInBasket)
+
+        val (isClearNeed, afterAction) = state.isClearNeedInBasketAndAction
+
+        if (isClearNeed) {
+            alertClearNeedInBasket(afterAction)
+        }
     }
 
     private fun initViewPager(restaurantInfoId: Long, restaurantFoodList: List<RestaurantFoodEntity>?) {
@@ -156,6 +165,35 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             tab.setText(RestaurantDetailCategory.values()[position].categoryNameId)
         }.attach()
 
+    }
+
+    // 장바구니안에 데이터 몇개들어있는지 알려주는 함수
+    private fun notifyBasketCount(foodMenuListInBasket: List<RestaurantFoodEntity>?) = with(binding) {
+        basketCountTextView.text = if (foodMenuListInBasket.isNullOrEmpty()) {  //널이거나 없다면
+            "0"
+        } else {
+            getString(R.string.basket_count, foodMenuListInBasket.size) //있다면 데이터 갯수 표시
+        }
+        basketButton.setOnClickListener {
+            //TODO 주문하기 화면 이동 or 로그인
+        }
+    }
+
+    // Alert dialog - 장바구니 초기화 될수도 있을때
+    private fun alertClearNeedInBasket(afterAction: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle("장바구니에는 같은 가게의 메뉴만 담을 수 있습니다.")
+            .setMessage("선택하신 메뉴를 장바구니에 담을 경우 이전에 담은 메뉴가 삭제됩니다.")
+            .setPositiveButton("담기") { dialog, _ ->  //텍스트와 리스너가 들어가는데 리스너가 사용안되서 익명으로 _를 사용했다.
+                viewModel.notifyClearBasket()
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     companion object {

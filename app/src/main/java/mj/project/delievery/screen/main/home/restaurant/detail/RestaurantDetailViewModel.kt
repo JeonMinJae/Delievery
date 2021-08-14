@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mj.project.delievery.data.entity.restaurant.RestaurantEntity
+import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
 import mj.project.delievery.data.repository.restaurant.food.RestaurantFoodRepository
 import mj.project.delievery.data.repository.user.UserRepository
 import mj.project.delievery.screen.base.BaseViewModel
@@ -23,10 +24,12 @@ class RestaurantDetailViewModel(
         )
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
         val foods = restaurantFoodRepository.getFoods(restaurantId = restaurantEntity.restaurantInfoId)
+        val foodMenuListInBasket = restaurantFoodRepository.getAllFoodMenuListInBasket()
         val isLiked = userRepository.getUserLikedRestaurant(restaurantEntity.restaurantTitle) != null
         restaurantDetailStateLiveData.value = RestaurantDetailState.Success(
             restaurantEntity = restaurantEntity,
             restaurantFoodList = foods,
+            foodMenuListInBasket = foodMenuListInBasket,
             isLiked = isLiked
         )
     }
@@ -66,6 +69,43 @@ class RestaurantDetailViewModel(
                 data.restaurantEntity
             }
             else -> null
+        }
+    }
+
+    fun notifyFoodMenuListInBasket(foodMenu: RestaurantFoodEntity) = viewModelScope.launch {
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(  // 해당 데이터 변형없이 복사본을 만들어 리턴한다.
+                    foodMenuListInBasket = data.foodMenuListInBasket?.toMutableList()?.apply {
+                        add(foodMenu)  // 장바구니 리스트에 선택한 foodmenu를 추가한다.
+                    }
+                )
+            }
+            else -> Unit
+        }
+    }
+    // <Pair<Boolean, () -> Unit>>()  true면 초기화 false는 초기화x
+    fun notifyClearNeedAlertInBasket(isClearNeed: Boolean, afterAction: () -> Unit) = viewModelScope.launch {
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(
+                    isClearNeedInBasketAndAction = Pair(isClearNeed, afterAction)
+                )
+            }
+            else -> Unit
+        }
+    }
+
+    // 장바구니 초기화됨을 알려주는 함수
+    fun notifyClearBasket() = viewModelScope.launch {
+        when (val data = restaurantDetailStateLiveData.value) {
+            is RestaurantDetailState.Success -> {
+                restaurantDetailStateLiveData.value = data.copy(
+                    foodMenuListInBasket = listOf(),
+                    isClearNeedInBasketAndAction = Pair(false, {})
+                )
+            }
+            else -> Unit
         }
     }
 

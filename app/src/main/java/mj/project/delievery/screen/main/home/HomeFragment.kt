@@ -46,6 +46,29 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
+    // location permission
+    // androidx requestcode가 deprecade되어서 registforactivityresult 사용하기 위해 만듬
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            //퍼미션이 들어가있는지 체크 / key, value체크
+            val responsePermissions = permissions.entries.filter {
+                (it.key == Manifest.permission.ACCESS_FINE_LOCATION)
+                        || (it.key == Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
+            if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
+                setMyLocationListener() // 위치정보 불러옴
+            } else {
+                // 권한설정 안되어있을경우 해달라고 요청
+                with(binding.locationTitleTextView) {
+                    setText(R.string.please_request_location_permission) // 현재위치나타날곳에 설정해달라는문구
+                    setOnClickListener {
+                        getMyLocation()
+                    }
+                }
+                Toast.makeText(requireContext(), getString(R.string.can_not_assigned_permission), Toast.LENGTH_SHORT).show()
+            }
+        }
+
     override fun initViews() = with(binding) {
         locationTitleTextView.setOnClickListener{
             viewModel.getMapSearchInfo()?.let { mapInfo ->
@@ -81,6 +104,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
 
     }
+
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding){
 
         val restaurantCategories = RestaurantCategory.values() // 전체, 한식 등등
@@ -112,35 +136,50 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
 
     }
-    override fun observeData() = viewModel.homeStateLiveData.observe(viewLifecycleOwner){
-        when (it) {
-            is HomeState.Uninitialized -> {
-                getMyLocation()
-            }
-            is HomeState.Loading -> {
-                binding.locationLoading.isVisible = true
-                binding.locationTitleTextView.text = getString(R.string.loading)
-            }
-            is HomeState.Success -> {
-                binding.locationLoading.isGone = true
-                binding.locationTitleTextView.text = it.mapSearchInfo.fullAddress
-                binding.tabLayout.isVisible =true
-                binding.filterScrollView.isVisible = true
-                binding.viewPager.isVisible = true //위치정보없을경우 숨김
-                initViewPager(it.mapSearchInfo.locationLatLng) //위도경도가지고 viewpager실행
-                if(it.isLocationSame.not()){
-                    Toast.makeText(requireContext(), R.string.please_set_your_current_location, Toast.LENGTH_SHORT).show()
-                }
-            }
-            is HomeState.Error -> {
-                binding.locationLoading.isGone = true
-                binding.locationTitleTextView.setText(R.string.location_not_found)
-                binding.locationTitleTextView.setOnClickListener{
+    override fun observeData() {
+        viewModel.homeStateLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is HomeState.Uninitialized -> {
                     getMyLocation()
                 }
-                Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
-            }
+                is HomeState.Loading -> {
+                    binding.locationLoading.isVisible = true
+                    binding.locationTitleTextView.text = getString(R.string.loading)
+                }
+                is HomeState.Success -> {
+                    binding.locationLoading.isGone = true
+                    binding.locationTitleTextView.text = it.mapSearchInfo.fullAddress
+                    binding.tabLayout.isVisible =true
+                    binding.filterScrollView.isVisible = true
+                    binding.viewPager.isVisible = true //위치정보없을경우 숨김
+                    initViewPager(it.mapSearchInfo.locationLatLng) //위도경도가지고 viewpager실행
+                    if(it.isLocationSame.not()){
+                        Toast.makeText(requireContext(), R.string.please_set_your_current_location, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                is HomeState.Error -> {
+                    binding.locationLoading.isGone = true
+                    binding.locationTitleTextView.setText(R.string.location_not_found)
+                    binding.locationTitleTextView.setOnClickListener{
+                        getMyLocation()
+                    }
+                    Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
+                }
+                else -> Unit
 
+            }
+        }
+        viewModel.foodMenuBasketLiveData.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {  //리스트가 있다면
+                binding.basketButtonContainer.isVisible = true  //장바구니 버튼이 보이고
+                binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
+                binding.basketButton.setOnClickListener{
+                    //TODO 로그인 OR 주문화면이동
+                }
+            } else {
+                binding.basketButtonContainer.isGone = true
+                binding.basketButton.setOnClickListener(null)
+            }
         }
     }
 
@@ -160,29 +199,6 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             locationPermissionLauncher.launch(locationPermissions)
         }
     }
-
-    // location permission
-    // androidx requestcode가 deprecade되어서 registforactivityresult 사용하기 위해 만듬
-    private val locationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            //퍼미션이 들어가있는지 체크 / key, value체크
-            val responsePermissions = permissions.entries.filter {
-                (it.key == Manifest.permission.ACCESS_FINE_LOCATION)
-                        || (it.key == Manifest.permission.ACCESS_COARSE_LOCATION)
-            }
-            if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
-                setMyLocationListener() // 위치정보 불러옴
-            } else {
-                // 권한설정 안되어있을경우 해달라고 요청
-                with(binding.locationTitleTextView) {
-                    setText(R.string.please_request_location_permission) // 현재위치나타날곳에 설정해달라는문구
-                    setOnClickListener {
-                        getMyLocation()
-                    }
-                }
-                Toast.makeText(requireContext(), getString(R.string.can_not_assigned_permission), Toast.LENGTH_SHORT).show()
-            }
-        }
 
     // 내위치 가져올때 생기는 상황
     @SuppressLint("MissingPermission")
@@ -225,6 +241,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
             locationManager.removeUpdates(myLocationListener)
         }
+    }
+
+    // resume되었을때 장바구니에 몇개 담겨있는지 확인
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkMyBasket()
     }
 
 
