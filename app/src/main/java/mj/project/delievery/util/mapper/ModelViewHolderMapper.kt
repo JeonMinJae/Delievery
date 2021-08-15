@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import mj.project.delievery.databinding.ViewholderEmptyBinding
 import mj.project.delievery.databinding.ViewholderFoodMenuBinding
 import mj.project.delievery.databinding.ViewholderRestaurantBinding
+import mj.project.delievery.databinding.ViewholderRestaurantReviewBinding
 import mj.project.delievery.model.CellType
 import mj.project.delievery.model.Model
 import mj.project.delievery.screen.base.BaseViewModel
@@ -13,6 +14,7 @@ import mj.project.delievery.widget.adapter.viewholder.EmptyViewHolder
 import mj.project.delievery.widget.adapter.viewholder.ModelViewHolder
 import mj.project.delievery.widget.adapter.viewholder.food.FoodMenuViewHolder
 import mj.project.delievery.widget.adapter.viewholder.restaurant.RestaurantViewHolder
+import mj.project.delievery.widget.adapter.viewholder.review.RestaurantReviewViewHolder
 
 object ModelViewHolderMapper {
 
@@ -35,12 +37,17 @@ object ModelViewHolderMapper {
                     viewModel,
                     resourcesProvider  //리소스프로바이더를 넘겨주면은 viewholder에서 string값을 가져올수있게끔한다.
             )
-            CellType.FOOD_CELL ->
-                FoodMenuViewHolder(
+            CellType.FOOD_CELL -> FoodMenuViewHolder(
                     ViewholderFoodMenuBinding.inflate(inflater, parent, false),
                     viewModel,
                     resourcesProvider
-                )
+            )
+            CellType.REVIEW_CELL -> RestaurantReviewViewHolder(
+                    ViewholderRestaurantReviewBinding.inflate(inflater, parent, false),
+                    viewModel,
+                    resourcesProvider
+            )
+
             /*
             CellType.LIKE_RESTAURANT_CELL ->
                 LikeRestaurantViewHolder(
@@ -55,13 +62,8 @@ object ModelViewHolderMapper {
                     viewModel,
                     resourcesProvider
                 )
-            CellType.REVIEW_CELL -> {
-                RestaurantReviewViewHolder(
-                    ViewholderRestaurantReviewBinding.inflate(inflater, parent, false),
-                    viewModel,
-                    resourcesProvider
-                )
-            }
+
+
             CellType.ORDER_CELL -> {
                 OrderViewHolder(
                     ViewholderOrderBinding.inflate(inflater, parent, false),

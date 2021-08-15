@@ -11,6 +11,8 @@ import mj.project.delievery.data.repository.restaurant.DefaultRestaurantReposito
 import mj.project.delievery.data.repository.restaurant.RestaurantRepository
 import mj.project.delievery.data.repository.restaurant.food.DefaultRestaurantFoodRepository
 import mj.project.delievery.data.repository.restaurant.food.RestaurantFoodRepository
+import mj.project.delievery.data.repository.restaurant.review.DefaultRestaurantReviewRepository
+import mj.project.delievery.data.repository.restaurant.review.RestaurantReviewRepository
 import mj.project.delievery.data.repository.user.DefaultUserRepository
 import mj.project.delievery.data.repository.user.UserRepository
 import mj.project.delievery.screen.main.home.HomeViewModel
@@ -39,13 +41,14 @@ val appModule = module {
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get()) }
     viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get(),get()) }
     viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList, get()) }
-    viewModel { RestaurantReviewListViewModel() }
+    viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle,get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get(),get()) }
     single<MapRepository> { DefaultMapRepository(get(), get()) }
     single<UserRepository> { DefaultUserRepository(get(), get(),get()) }
     single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get(), get()) }
+    single<RestaurantReviewRepository> {DefaultRestaurantReviewRepository(get())}
 
     // ProvideAPI
     single(named("map")) { provideMapRetrofit(get(),get()) }  //koin - named (qualifier), 같은 Return 값을 가질 때 구별하기 위해 작성
