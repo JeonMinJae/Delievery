@@ -5,6 +5,7 @@ import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
+import mj.project.delievery.data.preference.AppPreferenceManager
 import mj.project.delievery.data.repository.map.DefaultMapRepository
 import mj.project.delievery.data.repository.map.MapRepository
 import mj.project.delievery.data.repository.restaurant.DefaultRestaurantRepository
@@ -36,7 +37,7 @@ val appModule = module {
     //appmodule에 적혀있지 않은건 람다안에 '()->'형식으로 주입받게 해주고
     //appmodule에 적혀있는 것은 get() 으로 주입받게 한다.
     viewModel { HomeViewModel(get(), get(), get()) }
-    viewModel { MyViewModel() }
+    viewModel { MyViewModel(get()) }
     viewModel { (restaurantCategory : RestaurantCategory, locationLatLng: LocationLatLngEntity) -> RestaurantListViewModel(restaurantCategory,locationLatLng,get()) }
     viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity, get(), get()) }
     viewModel { (restaurantEntity: RestaurantEntity) -> RestaurantDetailViewModel(restaurantEntity, get(),get()) }
@@ -69,6 +70,9 @@ val appModule = module {
     single { provideLocationDao(get()) }
     single { provideRestaurantDao(get()) }
     single { provideFoodMenuBasketDao(get())}
+
+    //preferenceManager
+    single { AppPreferenceManager(androidApplication())}
 
     // 코루틴
     single { Dispatchers.IO }
