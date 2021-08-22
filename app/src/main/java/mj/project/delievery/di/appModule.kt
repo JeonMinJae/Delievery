@@ -25,6 +25,8 @@ import mj.project.delievery.screen.main.home.restaurant.detail.review.Restaurant
 import mj.project.delievery.screen.main.like.RestaurantLikeListViewModel
 import mj.project.delievery.screen.main.my.MyViewModel
 import mj.project.delievery.screen.mylocation.MyLocationViewModel
+import mj.project.delievery.screen.order.OrderMenuListViewModel
+import mj.project.delievery.util.event.MenuChangeEventBus
 import mj.project.delievery.util.provider.DefaultResourcesProvider
 import mj.project.delievery.util.provider.ResourcesProvider
 import org.koin.android.ext.koin.androidApplication
@@ -45,6 +47,7 @@ val appModule = module {
     viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList, get()) }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle,get()) }
     viewModel { RestaurantLikeListViewModel(get()) }
+    viewModel { OrderMenuListViewModel(get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get(),get()) }
@@ -80,5 +83,6 @@ val appModule = module {
     single { Dispatchers.IO }
     single { Dispatchers.Main }
 
-
+    // util
+    single { MenuChangeEventBus() }
 }

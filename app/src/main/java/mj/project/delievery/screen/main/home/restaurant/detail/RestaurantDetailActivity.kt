@@ -7,11 +7,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import mj.project.delievery.R
 import mj.project.delievery.data.entity.restaurant.RestaurantEntity
 import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
@@ -19,10 +23,14 @@ import mj.project.delievery.databinding.ActivityRestaurantDetailBinding
 import mj.project.delievery.extensions.fromDpToPx
 import mj.project.delievery.extensions.load
 import mj.project.delievery.screen.base.BaseActivity
+import mj.project.delievery.screen.main.MainTabMenu
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListFragment
 import mj.project.delievery.screen.main.home.restaurant.detail.menu.RestaurantMenuListFragment
 import mj.project.delievery.screen.main.home.restaurant.detail.review.RestaurantReviewListFragment
+import mj.project.delievery.screen.order.OrderMenuListActivity
+import mj.project.delievery.util.event.MenuChangeEventBus
 import mj.project.delievery.widget.adapter.RestaurantDetailListFragmentPagerAdapter
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.abs
@@ -39,6 +47,10 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
     override fun getViewBinding(): ActivityRestaurantDetailBinding = ActivityRestaurantDetailBinding.inflate(layoutInflater)
 
     private lateinit var viewPagerAdapter: RestaurantDetailListFragmentPagerAdapter
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+
+    private val menuChangeEventBus by inject<MenuChangeEventBus>()
 
     override fun initViews() {
         initAppBar()
@@ -175,8 +187,38 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             getString(R.string.basket_count, foodMenuListInBasket.size) //있다면 데이터 갯수 표시
         }
         basketButton.setOnClickListener {
-            //TODO 주문하기 화면 이동 or 로그인
+            if (firebaseAuth.currentUser == null) {
+                alertLoginNeed {
+                    lifecycleScope.launch {
+                        menuChangeEventBus.changeMenu(MainTabMenu.MY)
+                        finish()
+                    }
+                }
+            } else {
+                if (foodMenuListInBasket.isNullOrEmpty()) {
+                    Toast.makeText(this@RestaurantDetailActivity, "장바구니에 주문할 메뉴를 추가해주세요.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                startActivity(
+                    OrderMenuListActivity.newIntent(this@RestaurantDetailActivity)
+                )
+            }
         }
+    }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss() // <->cancel(메시지전달후, dismiss호출) , dismiss()- UI 스레드만이 다이얼로그를 종료시킨다
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     // Alert dialog - 장바구니 초기화 될수도 있을때

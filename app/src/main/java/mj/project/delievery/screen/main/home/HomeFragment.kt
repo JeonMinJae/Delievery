@@ -3,6 +3,7 @@ package mj.project.delievery.screen.main.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -12,15 +13,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import mj.project.delievery.R
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
 import mj.project.delievery.databinding.FragmentHomeBinding
 import mj.project.delievery.screen.base.BaseFragment
+import mj.project.delievery.screen.main.MainActivity
+import mj.project.delievery.screen.main.MainTabMenu
 import mj.project.delievery.screen.main.home.restaurant.RestaurantCategory
 import mj.project.delievery.screen.main.home.restaurant.RestaurantListFragment
 import mj.project.delievery.screen.main.home.restaurant.RestautantFilterOrder
 import mj.project.delievery.screen.mylocation.MyLocationActivity
+import mj.project.delievery.screen.order.OrderMenuListActivity
 import mj.project.delievery.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -34,6 +39,8 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var locationManager: LocationManager
 
     private lateinit var myLocationListener: MyLocationListener
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     override fun getViewBinding(): FragmentHomeBinding = FragmentHomeBinding.inflate(layoutInflater)
 
@@ -174,7 +181,15 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 binding.basketButtonContainer.isVisible = true  //장바구니 버튼이 보이고
                 binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
                 binding.basketButton.setOnClickListener{
-                    //TODO 로그인 OR 주문화면이동
+                    if (firebaseAuth.currentUser == null) {
+                        alertLoginNeed {
+                            (requireActivity() as MainActivity).goToTab(MainTabMenu.MY)
+                        }
+                    } else {
+                        startActivity(
+                            OrderMenuListActivity.newIntent(requireActivity())
+                        )
+                    }
                 }
             } else {
                 binding.basketButtonContainer.isGone = true
@@ -247,6 +262,21 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     override fun onResume() {
         super.onResume()
         viewModel.checkMyBasket()
+    }
+
+    private fun alertLoginNeed(afterAction: () -> Unit) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("로그인이 필요합니다.")
+            .setMessage("주문하려면 로그인이 필요합니다. My탭으로 이동하시겠습니까?")
+            .setPositiveButton("이동") { dialog, _ ->
+                afterAction()
+                dialog.dismiss()
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
 
