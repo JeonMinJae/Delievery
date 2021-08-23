@@ -5,16 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mj.project.delievery.R
+import mj.project.delievery.data.repository.order.DefaultOrderRepository
+import mj.project.delievery.data.repository.order.OrderRepository
 import mj.project.delievery.data.repository.restaurant.food.RestaurantFoodRepository
 import mj.project.delievery.model.CellType
 import mj.project.delievery.model.restaurant.FoodModel
 import mj.project.delievery.screen.base.BaseViewModel
+import java.lang.Error
 
 class OrderMenuListViewModel(
-    private val restaurantFoodRepository: RestaurantFoodRepository
+    private val restaurantFoodRepository: RestaurantFoodRepository,
+    private val orderRepository: OrderRepository
 ):BaseViewModel() {
 
-    //private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     val orderMenuStateLiveData = MutableLiveData<OrderMenuState>(OrderMenuState.Uninitialized)
 
@@ -38,15 +43,38 @@ class OrderMenuListViewModel(
         )
     }
 
-    fun orderMenu() {
-        TODO("Not yet implemented")
+    fun orderMenu() = viewModelScope.launch {
+        val foodMenuList = restaurantFoodRepository.getAllFoodMenuListInBasket()
+        if(foodMenuList.isNotEmpty()){
+            val restaurantId = foodMenuList.first().restaurantId
+            firebaseAuth.currentUser?.let { user ->
+                when(val data = orderRepository.orderMenu(user.uid,restaurantId,foodMenuList)){
+                    is DefaultOrderRepository.Result.Success<*> -> {
+                        restaurantFoodRepository.clearFoodMenuListInBasket()//주문 완료이기에 기존에 있었던걸 클리어 해줌
+                        orderMenuStateLiveData.value = OrderMenuState.Order
+                    }
+                    is DefaultOrderRepository.Result.Error -> {
+                        orderMenuStateLiveData.value = OrderMenuState.Error(
+                            R.string.request_error, data.e //e로 throwable
+                        )
+                    }
+                }
+            }?: kotlin.run {
+                orderMenuStateLiveData.value = OrderMenuState.Error(
+                    R.string.user_id_not_found, IllegalAccessException() //유저id가 존재하지 않을경우
+                )
+            }
+        }
     }
 
-    fun clearOrderMenu() {
-        TODO("Not yet implemented")
+    // 주문취소
+    fun clearOrderMenu()= viewModelScope.launch {
+        restaurantFoodRepository.clearFoodMenuListInBasket()
+        fetchData()
     }
 
-    fun removeOrderMenu(model: FoodModel) {
-
+    fun removeOrderMenu(model: FoodModel) = viewModelScope.launch {
+        restaurantFoodRepository.removeFoodMenuListInBasket(model.foodId)
+        fetchData()
     }
 }

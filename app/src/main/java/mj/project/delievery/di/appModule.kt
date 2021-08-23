@@ -1,5 +1,7 @@
 package mj.project.delievery.di
 
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import mj.project.delievery.data.entity.locaion.LocationLatLngEntity
 import mj.project.delievery.data.entity.locaion.MapSearchInfoEntity
@@ -8,6 +10,8 @@ import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
 import mj.project.delievery.data.preference.AppPreferenceManager
 import mj.project.delievery.data.repository.map.DefaultMapRepository
 import mj.project.delievery.data.repository.map.MapRepository
+import mj.project.delievery.data.repository.order.DefaultOrderRepository
+import mj.project.delievery.data.repository.order.OrderRepository
 import mj.project.delievery.data.repository.restaurant.DefaultRestaurantRepository
 import mj.project.delievery.data.repository.restaurant.RestaurantRepository
 import mj.project.delievery.data.repository.restaurant.food.DefaultRestaurantFoodRepository
@@ -47,7 +51,7 @@ val appModule = module {
     viewModel { (restaurantId: Long, restaurantFoodList: List<RestaurantFoodEntity>) -> RestaurantMenuListViewModel(restaurantId, restaurantFoodList, get()) }
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle,get()) }
     viewModel { RestaurantLikeListViewModel(get()) }
-    viewModel { OrderMenuListViewModel(get()) }
+    viewModel { OrderMenuListViewModel(get(),get()) }
 
     // Repository
     single<RestaurantRepository> { DefaultRestaurantRepository(get(),get(),get()) }
@@ -55,6 +59,7 @@ val appModule = module {
     single<UserRepository> { DefaultUserRepository(get(), get(),get()) }
     single<RestaurantFoodRepository> { DefaultRestaurantFoodRepository(get(), get(), get()) }
     single<RestaurantReviewRepository> {DefaultRestaurantReviewRepository(get())}
+    single<OrderRepository>{ DefaultOrderRepository(get(),get()) }
 
     // ProvideAPI
     single(named("map")) { provideMapRetrofit(get(),get()) }  //koin - named (qualifier), 같은 Return 값을 가질 때 구별하기 위해 작성
@@ -85,4 +90,7 @@ val appModule = module {
 
     // util
     single { MenuChangeEventBus() }
+
+    //firestore
+    single {Firebase.firestore}
 }
