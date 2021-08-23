@@ -23,18 +23,12 @@
   - Koin (for Light-Weight DI)
   - View-Binding
 
-* Unit Test
-  - JUnit4
-  - Mockito
-  - Koin-TestFAST CAMPUS
-
 * Third-Party Library
   - Glide, Glide-Transformation
   - Retrofit2
   - OkHttp3
-  - CameraX
   - Google Maps, Location
-  - Firebase Auth, Cloud Storage
+  - Firebase Auth, Firebase Store
 
 
 
