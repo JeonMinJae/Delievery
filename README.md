@@ -49,4 +49,4 @@
 
 |리뷰탭|다른 식당 상세화면 > 장바구니 담을 때 기존 비우기|장바구니 담기 > 로그인 되어 있지 않으면 프로필 탭 이동|주문내역 리스트|
 |---|---|---|---|
-|![Screenshot_20210823-110206](https://user-images.githubusercontent.com/38930501/130381951-93996b04-e2e0-4060-903a-da8a96711a3a.png)|![Screenshot_20210817-120316](https://user-images.githubusercontent.com/38930501/129659080-6e4bab65-ddef-4ecc-a929-557f344263eb.png)|![Screenshot_20210817-120344](https://user-images.githubusercontent.com/38930501/129659098-1d1a0d7b-f8e1-4f17-bd30-6d84baf894da.png)|![Screenshot_20210823-105927](https://user-images.githubusercontent.com/38930501/130453025-430b759a-e1e5-4fcf-be2d-992b5efabaf8.png)|
+|![Screenshot_20210823-110206](https://user-images.githubusercontent.com/38930501/130381951-93996b04-e2e0-4060-903a-da8a96711a3a.png)|![Screenshot_20210817-120316](https://user-images.githubusercontent.com/38930501/129659080-6e4bab65-ddef-4ecc-a929-557f344263eb.png)|![Screenshot_20210817-120344](https://user-images.githubusercontent.com/38930501/129659098-1d1a0d7b-f8e1-4f17-bd30-6d84baf894da.png)|![Screenshot_20210823-220857](https://user-images.githubusercontent.com/38930501/130453181-179c7750-ca3f-4bb2-aa16-b5b8a783f016.png)|
