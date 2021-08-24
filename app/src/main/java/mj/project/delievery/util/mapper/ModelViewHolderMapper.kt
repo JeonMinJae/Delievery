@@ -11,6 +11,7 @@ import mj.project.delievery.widget.adapter.viewholder.EmptyViewHolder
 import mj.project.delievery.widget.adapter.viewholder.ModelViewHolder
 import mj.project.delievery.widget.adapter.viewholder.food.FoodMenuViewHolder
 import mj.project.delievery.widget.adapter.viewholder.order.OrderMenuViewHolder
+import mj.project.delievery.widget.adapter.viewholder.order.OrderViewHolder
 import mj.project.delievery.widget.adapter.viewholder.restaurant.LikeRestaurantViewHolder
 import mj.project.delievery.widget.adapter.viewholder.restaurant.RestaurantViewHolder
 import mj.project.delievery.widget.adapter.viewholder.review.RestaurantReviewViewHolder
@@ -56,15 +57,12 @@ object ModelViewHolderMapper {
                     viewModel,
                     resourcesProvider
             )
-
-            /*
-            CellType.ORDER_CELL -> {
-                OrderViewHolder(
+            CellType.ORDER_CELL -> OrderViewHolder(
                     ViewholderOrderBinding.inflate(inflater, parent, false),
                     viewModel,
                     resourcesProvider
-                )
-            }*/
+            )
+
         }
 
         return viewHolder as ModelViewHolder<M>

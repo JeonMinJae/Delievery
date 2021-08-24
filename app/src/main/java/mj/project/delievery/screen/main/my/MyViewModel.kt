@@ -8,11 +8,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mj.project.delievery.R
+import mj.project.delievery.data.entity.order.OrderEntity
 import mj.project.delievery.data.preference.AppPreferenceManager
+import mj.project.delievery.data.repository.order.DefaultOrderRepository
+import mj.project.delievery.data.repository.order.OrderRepository
+import mj.project.delievery.data.repository.user.UserRepository
+import mj.project.delievery.model.order.OrderModel
 import mj.project.delievery.screen.base.BaseViewModel
 
 class MyViewModel(
-    private val appPreferenceManager : AppPreferenceManager
+    private val appPreferenceManager : AppPreferenceManager,
+    private val userRepository: UserRepository,
+    private val orderRepository: OrderRepository
 ): BaseViewModel() {
 
     val myStateLiveData = MutableLiveData<MyState>(MyState.Uninitialized)
@@ -37,11 +45,30 @@ class MyViewModel(
     @Suppress("UNCHECKED_CAST")
     fun setUserInfo(firebaseUser: FirebaseUser?) = viewModelScope.launch {
         firebaseUser?.let { user ->
-            myStateLiveData.value = MyState.Success.Registered(
-                userName = user.displayName ?: "익명",
-                profileImageUri = user.photoUrl
-            )
-
+            when (val orderMenusResult = orderRepository.getAllOrderMenus(user.uid)) {
+                is DefaultOrderRepository.Result.Success<*> -> {
+                    val orderList = orderMenusResult.data as List<OrderEntity>
+                    myStateLiveData.value = MyState.Success.Registered(
+                        userName = user.displayName ?: "익명",
+                        profileImageUri = user.photoUrl,
+                        orderList = orderList.map { order ->
+                            OrderModel(
+                                id = order.hashCode().toLong(),
+                                orderId = order.id,
+                                userId = order.userId,
+                                restaurantId = order.restaurantId,
+                                foodMenuList = order.foodMenuList
+                            )
+                        }
+                    )
+                }
+                is DefaultOrderRepository.Result.Error -> {
+                    myStateLiveData.value = MyState.Error(
+                        R.string.request_error,
+                        orderMenusResult.e
+                    )
+                }
+            }
         } ?: kotlin.run {
             myStateLiveData.value = MyState.Success.NotRegistered
         }
@@ -51,6 +78,7 @@ class MyViewModel(
         withContext(Dispatchers.IO) {
             appPreferenceManager.removeIdToken()
         }
+        userRepository.deleteALlUserLikedRestaurant()
         fetchData()
     }
 }

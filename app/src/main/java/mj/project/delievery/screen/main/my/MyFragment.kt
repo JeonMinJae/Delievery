@@ -14,13 +14,20 @@ import com.google.firebase.auth.GoogleAuthProvider
 import mj.project.delievery.R
 import mj.project.delievery.databinding.FragmentMyBinding
 import mj.project.delievery.extensions.load
+import mj.project.delievery.model.order.OrderModel
 import mj.project.delievery.screen.base.BaseFragment
+import mj.project.delievery.util.provider.ResourcesProvider
+import mj.project.delievery.widget.adapter.ModelRecyclerAdapter
+import mj.project.delievery.widget.adapter.listener.AdapterListener
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
     override val viewModel by viewModel<MyViewModel>()
 
     override fun getViewBinding(): FragmentMyBinding = FragmentMyBinding.inflate(layoutInflater)
+
+    private val resourcesProvider by inject<ResourcesProvider>()
 
     private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -33,6 +40,10 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
                 e.printStackTrace()
             }
         }
+    }
+
+    private val adapter by lazy {
+        ModelRecyclerAdapter<OrderModel, MyViewModel>(listOf(), viewModel, resourcesProvider, object : AdapterListener {})
     }
 
     private val gso: GoogleSignInOptions by lazy {
@@ -54,6 +65,7 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
             firebaseAuth.signOut()
             viewModel.signOut()
         }
+        recyclerView.adapter = adapter
     }
 
     override fun observeData() = viewModel.myStateLiveData.observe(this) {
@@ -110,7 +122,8 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         loginRequiredGroup.isGone = true
         profileImageView.load(state.profileImageUri.toString(), 60f)
         userNameTextView.text = state.userName
-
+        //Toast.makeText(requireContext(), state.orderList.toString(), Toast.LENGTH_SHORT).show()
+        adapter.submitList(state.orderList)
     }
 
     private fun signInGoogle(){

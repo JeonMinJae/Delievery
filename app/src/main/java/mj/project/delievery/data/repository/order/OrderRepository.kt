@@ -10,4 +10,8 @@ interface OrderRepository {
         foodMenuList: List<RestaurantFoodEntity> // 식당 메뉴,설명,가격,사진
     ): DefaultOrderRepository.Result
 
+    suspend fun getAllOrderMenus(
+        userId: String
+    ): DefaultOrderRepository.Result
+
 }
