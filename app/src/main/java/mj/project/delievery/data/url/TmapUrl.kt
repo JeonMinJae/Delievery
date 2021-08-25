@@ -1,10 +1,7 @@
 package mj.project.delievery.data.url
 
-//baseurl과 endpoint들
 object Url {
     const val TMAP_URL = "https://apis.openapi.sk.com"
-
-    const val GET_TMAP_POIS = "/tmap/pois"
 
     const val GET_TMAP_POIS_AROUND = "/tmap/pois/search/around"
 

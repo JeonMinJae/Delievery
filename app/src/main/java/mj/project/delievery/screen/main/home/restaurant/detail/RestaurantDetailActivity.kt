@@ -39,7 +39,7 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
 
     override val viewModel by viewModel<RestaurantDetailViewModel>{
         parametersOf(
-            //Parcelable은 intent로 데이터 전달 시 객체 자체를 전달 할 수 있도록 해준다
+            //Parcelable은 intent로 데이터 전달 시 객체 자체를 전달 할 수 있도록 해준다 & 전달받은key값
             intent.getParcelableExtra<RestaurantEntity>(RestaurantListFragment.RESTAURANT_KEY)
         )
     }
@@ -75,7 +75,7 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
             val abstractOffset = abs(verticalOffset) //절대값으로 움직인값, 기준으로 얼마나 떨어져있는지
 
             val realAlphaVerticalOffset: Float = if (abstractOffset - topPadding < 0) 0f  //기준으로 움직인게 300f보다 적을경우
-            else abstractOffset - topPadding
+                                                else abstractOffset - topPadding
 
             if (abstractOffset < topPadding) {
                 restaurantTitleTextView.alpha = 0f  //투명도는 0 = 선명
@@ -101,7 +101,7 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
                 val intent = Intent(Intent.ACTION_SEND).apply {
                     type = MIMETYPE_TEXT_PLAIN //ClipDescription - 평범한 텍스트
                     putExtra(
-                        Intent.EXTRA_TEXT,
+                        Intent.EXTRA_TEXT,  //EXTRA_TEXT-intent에 data를 저장하기위해
                         "맛있는 음식점 : ${restaurantInfo.restaurantTitle}" +
                                 "\n평점 : ${restaurantInfo.grade}" +
                                 "\n연락처 : ${restaurantInfo.restaurantTelNumber}"
@@ -118,11 +118,9 @@ class RestaurantDetailActivity : BaseActivity<RestaurantDetailViewModel, Activit
     }
 
     private fun handleSuccess(state: RestaurantDetailState.Success) = with(binding) {
-        progressBar.isGone = true
-
         val restaurantEntity = state.restaurantEntity
 
-        // callButton.visibility = if (restaurantEntity.restaurantTelNumber == null) callButton.Gone else callButton.visible 이것을 Core ktx를 사용한것이다.
+        progressBar.isGone = true
         callButton.isGone = restaurantEntity.restaurantTelNumber == null  // telnumber가 없으면 전화버튼 제거
 
         restaurantTitleTextView.text = restaurantEntity.restaurantTitle

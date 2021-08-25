@@ -74,6 +74,5 @@ data class AddressInfo(
         fullAddress = fullAddress ?: "주소 정보 없음",
         name = buildingName ?: "빌딩정보 없음",
         locationLatLng = locationLatLngEntity //외부에서 가져온 정보
-
     )
 }

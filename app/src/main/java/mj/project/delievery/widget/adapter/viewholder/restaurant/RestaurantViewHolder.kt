@@ -11,7 +11,6 @@ import mj.project.delievery.widget.adapter.listener.AdapterListener
 import mj.project.delievery.widget.adapter.listener.restaurant.RestaurantListListener
 import mj.project.delievery.widget.adapter.viewholder.ModelViewHolder
 
-
 class RestaurantViewHolder(
     private val binding: ViewholderRestaurantBinding,
     viewModel: BaseViewModel,

@@ -33,7 +33,7 @@ class OrderViewHolder(
             orderTotalPriceText.text =
                 resourcesProvider.getString(R.string.price,
                     foodMenuList.map { it.price }.reduce { total, price -> total + price })
-            //reduce를 사용하여 컬렉션 타입의 데이터를 람다에 차례로 전달해 결과값 반환
+            //reduce를 사용하여 컬렉션 타입의 데이터를 람다에 차례로 전달해 결과값 반환 누적값,현재값
         }
     }
 

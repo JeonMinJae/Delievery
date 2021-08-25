@@ -10,12 +10,10 @@ abstract class BaseViewModel: ViewModel() {
 
     protected var stateBundle: Bundle? = null
 
-    //koin 라이브러리 사용
     open fun fetchData(): Job = viewModelScope.launch {  }
 
     open fun storeState(stateBundle: Bundle) {
         this.stateBundle = stateBundle
-
     }
 
 }

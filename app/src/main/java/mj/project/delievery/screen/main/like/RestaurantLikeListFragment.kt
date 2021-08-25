@@ -15,14 +15,15 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class RestaurantLikeListFragment: BaseFragment<RestaurantLikeListViewModel, FragmentRestaurantLikeListBinding>() {
 
-    override fun getViewBinding(): FragmentRestaurantLikeListBinding = FragmentRestaurantLikeListBinding.inflate(layoutInflater)
-
     override val viewModel by viewModel<RestaurantLikeListViewModel>()
+
+    override fun getViewBinding(): FragmentRestaurantLikeListBinding = FragmentRestaurantLikeListBinding.inflate(layoutInflater)
 
     private val resourcesProvider by inject<ResourcesProvider>()
 
     private val adapter by lazy {
-        ModelRecyclerAdapter<RestaurantModel, RestaurantLikeListViewModel>(listOf(), viewModel, resourcesProvider, adapterListener = object : RestaurantLikeListListener {
+        ModelRecyclerAdapter<RestaurantModel, RestaurantLikeListViewModel>(
+            listOf(), viewModel, resourcesProvider, adapterListener = object : RestaurantLikeListListener {
 
             override fun onDislikeItem(model: RestaurantModel) {
                 viewModel.dislikeRestaurant(model.toEntity())
@@ -54,11 +55,8 @@ class RestaurantLikeListFragment: BaseFragment<RestaurantLikeListViewModel, Frag
     }
 
     companion object {
-
-        fun newInstance() = RestaurantLikeListFragment()
-
         const val TAG = "likeFragment"
 
+        fun newInstance() = RestaurantLikeListFragment()
     }
-
 }

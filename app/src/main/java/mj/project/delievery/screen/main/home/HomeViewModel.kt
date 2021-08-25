@@ -18,15 +18,10 @@ class HomeViewModel(
     private val restaurantFoodRepository: RestaurantFoodRepository
 ): BaseViewModel() {
 
-    companion object {
-        const val MY_LOCATION_KEY = "MyLocation"
-    }
-
     val homeStateLiveData = MutableLiveData<HomeState>(HomeState.Uninitialized)
-
     val foodMenuBasketLiveData = MutableLiveData<List<RestaurantFoodEntity>>()
 
-    //api호출
+    // 리버스GEO코딩 방식으로 위치정보 불러올계획 ,건물명 도로명 검색으로 위도경도x 경도위도로 건물명 도로명 알아내는방법o
     fun loadReverseGeoInformation(
         locationLatLngEntity: LocationLatLngEntity
     )= viewModelScope.launch {
@@ -44,7 +39,6 @@ class HomeViewModel(
                 R.string.can_not_load_address_info
             )
         }
-
     }
 
     // 받아둔 데이터있는지 판별
@@ -61,5 +55,7 @@ class HomeViewModel(
         foodMenuBasketLiveData.value = restaurantFoodRepository.getAllFoodMenuListInBasket()
     }
 
-
+    companion object {
+        const val MY_LOCATION_KEY = "MyLocation"
+    }
 }

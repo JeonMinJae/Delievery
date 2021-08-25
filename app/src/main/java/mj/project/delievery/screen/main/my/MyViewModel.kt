@@ -34,7 +34,6 @@ class MyViewModel(
         }
     }
 
-
     fun saveToken(idToken: String) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             appPreferenceManager.putIdToken(idToken)

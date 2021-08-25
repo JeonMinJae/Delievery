@@ -37,7 +37,6 @@ class OrderMenuListViewModel(
                     imageUrl = it.imageUrl,
                     restaurantId = it.restaurantId,
                     foodId = it.id,
-
                 )
             }
         )
@@ -67,12 +66,13 @@ class OrderMenuListViewModel(
         }
     }
 
-    // 주문취소
+    // 전체주문취소
     fun clearOrderMenu()= viewModelScope.launch {
         restaurantFoodRepository.clearFoodMenuListInBasket()
         fetchData()
     }
 
+    // 선택한 주문 취소
     fun removeOrderMenu(model: FoodModel) = viewModelScope.launch {
         restaurantFoodRepository.removeFoodMenuListInBasket(model.foodId)
         fetchData()

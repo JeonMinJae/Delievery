@@ -28,7 +28,7 @@ class DelieveryApplication: Application() {
 
     companion object {
         var appContext: Context? = null
-            private set //내부에서만 사용할거라서
+            private set //외부에서 set을 할 수 없도록 하기 위해서 선언
     }
 
 }

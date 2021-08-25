@@ -29,6 +29,10 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
 
     private val resourcesProvider by inject<ResourcesProvider>()
 
+    private val adapter by lazy {
+        ModelRecyclerAdapter<OrderModel, MyViewModel>(listOf(), viewModel, resourcesProvider, object : AdapterListener {})
+    }
+
     private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -40,10 +44,6 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
                 e.printStackTrace()
             }
         }
-    }
-
-    private val adapter by lazy {
-        ModelRecyclerAdapter<OrderModel, MyViewModel>(listOf(), viewModel, resourcesProvider, object : AdapterListener {})
     }
 
     private val gso: GoogleSignInOptions by lazy {
@@ -86,7 +86,7 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
 
     //객체에서 ID 토큰을 가져와서 Firebase 사용자 인증 정보로 교환하고 해당 정보를 사용해 Firebase에 인증
     private fun handleLoginState(state: MyState.Login) = with(binding) {
-        binding.progressBar.isVisible = true
+        progressBar.isVisible = true
         val credential = GoogleAuthProvider.getCredential(state.idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(requireActivity()) { task ->
@@ -122,7 +122,6 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         loginRequiredGroup.isGone = true
         profileImageView.load(state.profileImageUri.toString(), 60f)
         userNameTextView.text = state.userName
-        //Toast.makeText(requireContext(), state.orderList.toString(), Toast.LENGTH_SHORT).show()
         adapter.submitList(state.orderList)
     }
 
@@ -135,5 +134,4 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         const val TAG = "MyFragment"
         fun newInstance() = MyFragment()
     }
-
 }

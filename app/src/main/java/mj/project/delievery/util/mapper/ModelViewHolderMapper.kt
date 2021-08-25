@@ -7,7 +7,6 @@ import mj.project.delievery.model.CellType
 import mj.project.delievery.model.Model
 import mj.project.delievery.screen.base.BaseViewModel
 import mj.project.delievery.util.provider.ResourcesProvider
-import mj.project.delievery.widget.adapter.viewholder.EmptyViewHolder
 import mj.project.delievery.widget.adapter.viewholder.ModelViewHolder
 import mj.project.delievery.widget.adapter.viewholder.food.FoodMenuViewHolder
 import mj.project.delievery.widget.adapter.viewholder.order.OrderMenuViewHolder
@@ -27,11 +26,6 @@ object ModelViewHolderMapper {
     ): ModelViewHolder<M> {
         val inflater = LayoutInflater.from(parent.context)
         val viewHolder = when (type) {
-            CellType.EMPTY_CELL -> EmptyViewHolder(
-                    ViewholderEmptyBinding.inflate(inflater, parent, false),
-                    viewModel,
-                    resourcesProvider
-            )
             CellType.RESTAURANT_CELL -> RestaurantViewHolder(
                     ViewholderRestaurantBinding.inflate(inflater, parent, false),
                     viewModel,
@@ -62,9 +56,7 @@ object ModelViewHolderMapper {
                     viewModel,
                     resourcesProvider
             )
-
         }
-
         return viewHolder as ModelViewHolder<M>
     }
 

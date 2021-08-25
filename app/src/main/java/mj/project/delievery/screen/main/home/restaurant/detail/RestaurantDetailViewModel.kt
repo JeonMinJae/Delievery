@@ -19,9 +19,6 @@ class RestaurantDetailViewModel(
     val restaurantDetailStateLiveData = MutableLiveData<RestaurantDetailState>(RestaurantDetailState.Uninitialized)
 
     override fun fetchData(): Job = viewModelScope.launch {
-        restaurantDetailStateLiveData.value = RestaurantDetailState.Success(
-            restaurantEntity = restaurantEntity //detailstate.entity = restaurantentity
-        )
         restaurantDetailStateLiveData.value = RestaurantDetailState.Loading
         val foods = restaurantFoodRepository.getFoods(restaurantId = restaurantEntity.restaurantInfoId)
         val foodMenuListInBasket = restaurantFoodRepository.getAllFoodMenuListInBasket()
@@ -46,7 +43,7 @@ class RestaurantDetailViewModel(
     fun toggleLikedRestaurant() = viewModelScope.launch {
         when (val data = restaurantDetailStateLiveData.value) {
             is RestaurantDetailState.Success -> {
-                // userLiskedRestaurant가 있다 -> 토글버튼눌렀으므로 없애줘야한다.
+                // userLikedRestaurant가 있다 -> 토글버튼눌렀으므로 없애줘야한다.
                 userRepository.getUserLikedRestaurant(restaurantEntity.restaurantTitle)?.let {
                     userRepository.deleteUserLikedRestaurant(it.restaurantTitle)
                     restaurantDetailStateLiveData.value = data.copy( // copy()는 객체의 복사본을 만들어 리턴합니다.copy()의 인자로 생성자에 정의된 프로퍼티를 넘길 수 있으며, 그 프로퍼티의 값만 변경되고 나머지 값은 동일한 객체가 생성됩니다.
@@ -75,7 +72,7 @@ class RestaurantDetailViewModel(
     fun notifyFoodMenuListInBasket(foodMenu: RestaurantFoodEntity) = viewModelScope.launch {
         when (val data = restaurantDetailStateLiveData.value) {
             is RestaurantDetailState.Success -> {
-                restaurantDetailStateLiveData.value = data.copy(  // 해당 데이터 변형없이 복사본을 만들어 리턴한다.
+                restaurantDetailStateLiveData.value = data.copy(
                     foodMenuListInBasket = data.foodMenuListInBasket?.toMutableList()?.apply {
                         add(foodMenu)  // 장바구니 리스트에 선택한 foodmenu를 추가한다.
                     }
@@ -84,6 +81,7 @@ class RestaurantDetailViewModel(
             else -> Unit
         }
     }
+
     // <Pair<Boolean, () -> Unit>>()  true면 초기화 false는 초기화x
     fun notifyClearNeedAlertInBasket(isClearNeed: Boolean, afterAction: () -> Unit) = viewModelScope.launch {
         when (val data = restaurantDetailStateLiveData.value) {
@@ -108,6 +106,4 @@ class RestaurantDetailViewModel(
             else -> Unit
         }
     }
-
-
 }

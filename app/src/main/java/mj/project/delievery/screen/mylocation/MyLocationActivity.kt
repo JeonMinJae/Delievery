@@ -26,27 +26,17 @@ import org.koin.core.parameter.parametersOf
 // getMapAsync ( ) 함수를 이용하여 등록합니다. 이렇게 해놓으면 지도 객체를 사용할 수 있을 때 onMapReady( ) 함수가 자동으로 호출되면서 매개변수로 GoogleMap 객체가 전달됩니다.
 class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationBinding>(), OnMapReadyCallback {
 
-    // () 와 {} 를 헷갈리지말자
     override val viewModel by viewModel<MyLocationViewModel>{
         parametersOf(intent.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY))
     }
 
+    override fun getViewBinding() = ActivityMyLocationBinding.inflate(layoutInflater)
+
     private lateinit var map: GoogleMap
 
     private var isMapInitialized: Boolean = false
+
     private var isChangingLocation: Boolean = false
-
-    override fun getViewBinding() = ActivityMyLocationBinding.inflate(layoutInflater)
-
-    companion object {
-        const val CAMERA_ZOOM_LEVEL = 17f
-
-        fun newIntent(context: Context, mapSearchInfoEntity: MapSearchInfoEntity) =
-            Intent(context, MyLocationActivity::class.java).apply {
-                putExtra(HomeViewModel.MY_LOCATION_KEY, mapSearchInfoEntity)
-            }
-
-    }
 
     override fun initViews() = with(binding) {
         toolbar.setNavigationOnClickListener {
@@ -82,6 +72,7 @@ class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationB
             }
         }
     }
+
     private fun handleLoadingState() = with(binding) {
         locationLoading.isVisible = true
         locationTitleTextView.text = getString(R.string.loading)
@@ -133,4 +124,12 @@ class MyLocationActivity : BaseActivity<MyLocationViewModel, ActivityMyLocationB
         viewModel.fetchData()
     }
 
+    companion object {
+        const val CAMERA_ZOOM_LEVEL = 17f
+
+        fun newIntent(context: Context, mapSearchInfoEntity: MapSearchInfoEntity) =
+            Intent(context, MyLocationActivity::class.java).apply {
+                putExtra(HomeViewModel.MY_LOCATION_KEY, mapSearchInfoEntity)
+            }
+    }
 }

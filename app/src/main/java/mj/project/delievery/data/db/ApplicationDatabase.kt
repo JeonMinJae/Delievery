@@ -15,8 +15,7 @@ import mj.project.delievery.data.entity.restaurant.RestaurantFoodEntity
     version = 1,
     exportSchema = false
 )
-//db에서  dao함수를 두개사용 dao함수에서는 각각 LocationLatLngEntity와 RestaurantEntity를 사용해서
-// @Database에서 엔티티를 두개 써주었다.
+
 abstract class ApplicationDatabase: RoomDatabase() {
 
     companion object {

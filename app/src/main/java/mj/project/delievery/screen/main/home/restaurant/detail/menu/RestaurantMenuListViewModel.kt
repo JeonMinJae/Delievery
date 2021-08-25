@@ -23,7 +23,7 @@ class RestaurantMenuListViewModel(
 
     override fun fetchData(): Job = viewModelScope.launch {
         restaurantMenuListLiveData.value = foodEntityList.map {
-            FoodModel( //index0부터 들어오기때문에 순서바꾸면 안된다.  (foodmodel.value = RestaurantFoodEntity.value) 엔티티값을 model에 주입
+            FoodModel( //index0부터 들어오기때문에 순서바꾸면 안된다.
                 id = it.hashCode().toLong(),  // hashcode는 객체의 주소값을 변환하여 생성한 객체의 고유한 정수값이다.
                 title = it.title,
                 description = it.description,
@@ -54,6 +54,4 @@ class RestaurantMenuListViewModel(
         restaurantFoodRepository.insertFoodMenuInBasket(foodMenuEntity) // 장바구니에 추가한다.
         menuBasketLiveData.value = foodMenuEntity
     }
-
-
 }

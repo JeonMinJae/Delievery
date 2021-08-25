@@ -14,13 +14,13 @@ import org.koin.core.parameter.parametersOf
 
 class RestaurantReviewListFragment : BaseFragment<RestaurantReviewListViewModel, FragmentRestaurantListBinding>() {
 
-    override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
-
     override val viewModel by viewModel<RestaurantReviewListViewModel> {
         parametersOf(
             arguments?.getString(RESTAURANT_TITLE_KEY)
         )
     }
+
+    override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
 
     private val resourcesProvider by inject<ResourcesProvider>()
 
@@ -62,5 +62,4 @@ class RestaurantReviewListFragment : BaseFragment<RestaurantReviewListViewModel,
         }
 
     }
-
 }

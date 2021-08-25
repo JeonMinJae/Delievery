@@ -10,7 +10,6 @@ import mj.project.delievery.model.CellType
 import mj.project.delievery.model.restaurant.RestaurantModel
 import mj.project.delievery.screen.base.BaseViewModel
 
-
 class RestaurantLikeListViewModel(
     private val userRepository: UserRepository
 ): BaseViewModel() {

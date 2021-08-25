@@ -87,5 +87,4 @@ class OrderMenuListActivity : BaseActivity<OrderMenuListViewModel, ActivityOrder
     companion object {
         fun newIntent(context: Context) = Intent(context, OrderMenuListActivity::class.java)
     }
-
 }

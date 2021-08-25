@@ -19,18 +19,16 @@ import org.koin.core.parameter.parametersOf
 
 class RestaurantMenuListFragment : BaseFragment<RestaurantMenuListViewModel, FragmentRestaurantListBinding>() {
 
-    override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
-
-    private val restaurantId by lazy { arguments?.getLong(RESTAURANT_ID_KEY, -1) } //key,value
-
-    private val restaurantFoodList by lazy { arguments?.getParcelableArrayList<RestaurantFoodEntity>(FOOD_LIST_KEY)!! } //null값이 절대 오면 안되서 !! 사용
-
-    // viewmodel에 parameter값을 전달해주는 역할
     override val viewModel by viewModel<RestaurantMenuListViewModel>{parametersOf(restaurantId, restaurantFoodList) }
 
-    // by sharedViewModel()을 통하여 activity의 ViewModel을 받아올 수 있다.
-    //그러면 activity와 sharedViewModel로 주입받은 fragment 모두 같은 ViewModel을 사용하기 때문에 데이터가 변하면 livedata를 통해 모든 뷰가 이벤트를 받을 수 있다.
+    // by sharedViewModel()을 통하여 sharedViewModel로 주입받은 fragment 모두 같은 ViewModel을 사용하기 때문에 데이터가 변하면 livedata를 통해 모든 뷰가 이벤트를 받을 수 있다.
     private val restaurantDetailViewModel by sharedViewModel<RestaurantDetailViewModel>()
+
+    override fun getViewBinding(): FragmentRestaurantListBinding = FragmentRestaurantListBinding.inflate(layoutInflater)
+
+    private val restaurantId by lazy { arguments?.getLong(RESTAURANT_ID_KEY, -1) }
+
+    private val restaurantFoodList by lazy { arguments?.getParcelableArrayList<RestaurantFoodEntity>(FOOD_LIST_KEY)!! } //null값이 절대 오면 안되서 !! 사용
 
     private val resourcesProvider by inject<ResourcesProvider>()
 
@@ -68,7 +66,6 @@ class RestaurantMenuListFragment : BaseFragment<RestaurantMenuListViewModel, Fra
         const val FOOD_LIST_KEY = "foodList"
 
         fun newInstance(restaurantId: Long, foodList: ArrayList<RestaurantFoodEntity>): RestaurantMenuListFragment {
-
             // arguments = Bundle().apply{putInt("key",value)} 를 core ktx사용해서 arguments = bundleOf("key" to value)로 바꾼거다.
             val bundle = bundleOf(
                 RESTAURANT_ID_KEY to restaurantId,
@@ -79,7 +76,5 @@ class RestaurantMenuListFragment : BaseFragment<RestaurantMenuListViewModel, Fra
                 arguments = bundle
             }
         }
-
     }
-
 }

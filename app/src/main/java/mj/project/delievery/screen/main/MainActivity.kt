@@ -28,9 +28,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        observeData()  // baseActivty가 아닌 appcompatiactivity를 상속받기에 써줘야한다.
-
         initViews()
+        observeData()  // baseActivty가 아닌 appcompatiactivity를 상속받기에 써줘야한다.
     }
 
     private fun initViews() = with(binding) {
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun observeData(){
         lifecycleScope.launch {
-            // collect - 터미널 연산자를 사용하여 값 수신 대기를 시작하는 흐름을 트리거합니다. 내보낼 때 스트림의 모든 값을 가져오려면 collect를 사용합니다.
+            // collect - flow에서 데이터 요청하는 함수
             menuChangeEventBus.mainTabMenuFlow.collect {
                 goToTab(it)
             }

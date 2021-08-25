@@ -28,7 +28,7 @@ class OrderMenuViewHolder(
             foodImage.load(model.imageUrl, 24f, CenterCrop())
             foodTitleText.text = model.title
             foodDescriptionText.text = model.description
-            priceText.text = "{model.price}원"
+            priceText.text = resourcesProvider.getString(R.string.price, model.price)
         }
     }
 
